@@ -1,0 +1,38 @@
+{
+    "pcap": "psexec_attack.pcap",
+    "alert_count": 4,
+    "alerts": [
+        {
+            "packet": "1",
+            "type": "SMB2 Admin Share Access",
+            "severity": "HIGH",
+            "src": "10.0.0.50",
+            "dst": "10.0.0.5",
+            "details": "Raw payload match identified administrative share indicator (C$/ADMIN$/IPC$)"
+        },
+        {
+            "packet": "1",
+            "type": "PsExec / Service Control Pipe Execution",
+            "severity": "CRITICAL",
+            "src": "10.0.0.50",
+            "dst": "10.0.0.5",
+            "details": "Identified PsExec/Service Control Manager named pipe interaction (svcctl/PSEXESVC)"
+        },
+        {
+            "packet": "2",
+            "type": "SMB2 Admin Share Access",
+            "severity": "HIGH",
+            "src": "10.0.0.50",
+            "dst": "10.0.0.5",
+            "details": "Raw payload match identified administrative share indicator (C$/ADMIN$/IPC$)"
+        },
+        {
+            "packet": "2",
+            "type": "PsExec / Service Control Pipe Execution",
+            "severity": "CRITICAL",
+            "src": "10.0.0.50",
+            "dst": "10.0.0.5",
+            "details": "Identified PsExec/Service Control Manager named pipe interaction (svcctl/PSEXESVC)"
+        }
+    ]
+}

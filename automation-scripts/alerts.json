@@ -1,0 +1,14 @@
+{
+    "pcap": "smb_admin_attack.pcap",
+    "alert_count": 1,
+    "alerts": [
+        {
+            "packet": "1",
+            "type": "SMB2 Admin Share Access",
+            "severity": "HIGH",
+            "src": "10.0.0.50",
+            "dst": "10.0.0.5",
+            "details": "Raw payload match identified administrative share indicator (C$/ADMIN$/IPC$)"
+        }
+    ]
+}

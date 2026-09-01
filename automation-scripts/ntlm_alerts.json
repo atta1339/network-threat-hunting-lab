@@ -1,0 +1,14 @@
+{
+    "pcap": "ntlm_attack.pcap",
+    "alert_count": 1,
+    "alerts": [
+        {
+            "packet": "1",
+            "type": "NTLM Authentication Over SMB (Downgrade Hazard)",
+            "severity": "HIGH",
+            "src": "10.0.0.50",
+            "dst": "10.0.0.5",
+            "details": "Identified NTLMSSP exchange over SMB. Potential NTLM Relay or credential harvesting vector."
+        }
+    ]
+}
