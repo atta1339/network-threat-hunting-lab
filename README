@@ -102,3 +102,4 @@ Run these short commands in your terminal:
 git add README.md automation-scripts/ntlm_alerts.json
 git commit -m "docs: add comprehensive lab README and update alert JSON"
 git push origin main
+
