@@ -13,7 +13,7 @@ This tool employs a **Dual-Engine Detection Strategy**:
 2. **Scapy Fallback & Raw Byte Inspection Engine:** Scans raw TCP stream payloads directly to catch obfuscated, malformed, or un-dissected protocol indicators (`C$`, `ADMIN$`, `IPC$`, `svcctl`, `PSEXESVC`, `NTLMSSP`).
 
 
-[ Packet Capture (.pcap) ]
+                       [ Packet Capture (.pcap) ]
                                       │
                  ┌────────────────────┴────────────────────┐
                  ▼                                         ▼
