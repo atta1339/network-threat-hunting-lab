@@ -1,5 +1,5 @@
 {
-    "pcap": "ntlm_attack.pcap",
+    "pcap": "automation-scripts/ntlm_attack.pcap",
     "alert_count": 1,
     "alerts": [
         {

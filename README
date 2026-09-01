@@ -1,0 +1,104 @@
+# Network Threat Hunting & Protocol Analysis Automation Lab
+
+An automated network threat hunting engine built in Python using **TShark** and **Scapy**. This tool analyzes packet capture (`.pcap`) files to identify suspicious Active Directory, SMB, NTLM, and Service Control Manager protocol activity, outputting structured SIEM-ready JSON logs for security analysts.
+
+---
+
+## Technical Overview
+
+Modern network attackers often leverage administrative tools (e.g., PsExec, SMB share access) or target legacy authentication protocols (e.g., NTLMSSP downgrade vectors). Standard Wireshark display filters can miss raw socket-level payloads if protocols aren't strictly framed, while pure byte-searching lacks protocol-level context.
+
+This tool employs a **Dual-Engine Detection Strategy**:
+1. **TShark Protocol Dissection Engine:** Performs fast, field-accurate extraction of dissected SMB2 and NTLMSSP attributes (e.g., `smb2.tree.name`, `ntlmssp`).
+2. **Scapy Fallback & Raw Byte Inspection Engine:** Scans raw TCP stream payloads directly to catch obfuscated, malformed, or un-dissected protocol indicators (`C$`, `ADMIN$`, `IPC$`, `svcctl`, `PSEXESVC`, `NTLMSSP`).
+
+
+[ Packet Capture (.pcap) ]
+                                      │
+                 ┌────────────────────┴────────────────────┐
+                 ▼                                         ▼
+     [ TShark Dissection Engine ]              [ Scapy Raw Stream Engine ]
+     - SMB2 Tree Access Filters               - Stream-level Byte Matching
+     - Dissected NTLMSSP Fields               - Raw Pipe & Share Extraction
+                 │                                         │
+                 └────────────────────┬────────────────────┘
+                                      ▼
+                           [ Deduplication Engine ]
+                                      │
+                 ┌────────────────────┴────────────────────┐
+                 ▼                                         ▼
+        [ CLI Alert Summary ]                   [ SIEM-Ready JSON Export ]
+
+        ---
+
+## Threat Detection & MITRE ATT&CK Mapping
+
+| Threat / Activity | Severity | Protocol Indicator | MITRE ATT&CK Technique |
+| :--- | :--- | :--- | :--- |
+| **Admin Share Access** | `HIGH` | `C$`, `ADMIN$`, `IPC$` | [T1021.002 - SMB/Windows Admin Shares](https://attack.mitre.org/techniques/T1021/002/) |
+| **PsExec / Service Control** | `CRITICAL` | `svcctl`, `PSEXESVC` | [T1569.002 - Service Execution](https://attack.mitre.org/techniques/T1569/002/) |
+| **NTLM Downgrade / Relay** | `HIGH` | `NTLMSSP` Exchange | [T1557.001 - LLMNR/NBT-NS & NTLM Relay](https://attack.mitre.org/techniques/T1557/001/) |
+
+---
+
+## Directory Structure
+
+```text
+network-threat-hunting-lab/
+├── automation-scripts/
+│   ├── analyze_smb_kerberos.py   # Core Python threat hunting engine
+│   ├── ntlm_attack.pcap          # Synthetic test capture (NTLMSSP vector)
+│   ├── psexec_attack.pcap        # Synthetic test capture (PsExec named pipe)
+│   ├── smb_admin_attack.pcap     # Synthetic test capture (Admin share access)
+│   └── ntlm_alerts.json          # Exported SIEM JSON alert output
+└── README.md
+
+Prerequisites & Installation
+Requirements
+Python 3.8+
+
+Wireshark / TShark (Must be in your system $PATH)
+
+Python Dependencies
+Install Scapy via pip:
+Bash
+pip install scapy
+
+Usage
+Run the analysis script against any .pcap capture file. Use the --json flag to export structured logs.
+
+Basic Execution
+Bash
+python automation-scripts/analyze_smb_kerberos.py automation-scripts/ntlm_attack.pcap
+
+Export to SIEM-Ready JSON
+python automation-scripts/analyze_smb_kerberos.py automation-scripts/ntlm_attack.pcap --json automation-scripts/ntlm_alerts.json
+
+Sample Outputs
+Terminal Console Output
+======================================================================
+[*] Starting Threat Hunting Analysis: ntlm_attack.pcap
+======================================================================
+
+[✔] Processed SMB2 & Kerberos activity.
+[✔] Total Security Alerts Identified: 1
+
+PKT #    | SEVERITY   | ALERT TYPE                               | SRC IP          -> DST IP
+----------------------------------------------------------------------------------------------------
+1        | HIGH       | NTLM Authentication Over SMB (Downgrade Hazard) | 10.0.0.50       -> 10.0.0.5
+         └─ Details: Identified NTLMSSP exchange over SMB. Potential NTLM Relay or credential harvesting vector.
+
+[+] Successfully exported SIEM-ready JSON output to: ntlm_alerts.json
+
+3. Save the file as **`README.md`** directly inside the root folder (`network-threat-hunting-lab/`).
+
+---
+
+### Step 2: Push to GitHub
+
+Run these short commands in your terminal:
+
+```bash
+git add README.md automation-scripts/ntlm_alerts.json
+git commit -m "docs: add comprehensive lab README and update alert JSON"
+git push origin main
